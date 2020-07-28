@@ -1,0 +1,7 @@
+---
+pulp_url: http://pulp3-sandbox-debian10
+pulp_username: admin
+pulp_password: password
+
+pulp_fixtures_url: "https://fixtures.pulpproject.org"
+...

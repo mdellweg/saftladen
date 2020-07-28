@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  collections:
+    - pulp.squeezer
+  gather_facts: false
+  vars_files:
+    - vars/server.yaml
+  module_defaults: &pulp_module_defaults
+    ansible_distribution: &pulp_connection_details
+      pulp_url: "{{ pulp_url }}"
+      username: "{{ pulp_username }}"
+      password: "{{ pulp_password }}"
+    ansible_remote:
+      <<: *pulp_connection_details
+    ansible_sync:
+      <<: *pulp_connection_details
+    ansible_repository:
+      <<: *pulp_connection_details
+  tasks:
+    - name: Make repository present
+      ansible_repository:
+        name: demo_repository
+        state: present
+
+    - name: Make remote present
+      ansible_remote:
+        name: demo_remote
+        url: "https://galaxy.ansible.com/api/v1/roles/?namespace__name=ansible"
+        state: present
+
+    - name: Sync remote into repository
+      ansible_sync:
+        remote: demo_remote
+        repository: demo_repository
+
+    - name: Distribute latest version of repository
+      ansible_distribution:
+        name: demo_distribution
+        base_path: squeezer/demo
+        repository: demo_repository
+        state: present
+...

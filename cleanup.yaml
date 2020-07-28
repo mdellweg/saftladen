@@ -1,0 +1,40 @@
+---
+- hosts: localhost
+  collections:
+    - pulp.squeezer
+  gather_facts: false
+  vars_files:
+    - vars/server.yaml
+  module_defaults: &pulp_module_defaults
+    ansible_distribution: &pulp_connection_details
+      pulp_url: "{{ pulp_url }}"
+      username: "{{ pulp_username }}"
+      password: "{{ pulp_password }}"
+    ansible_remote:
+      <<: *pulp_connection_details
+    ansible_sync:
+      <<: *pulp_connection_details
+    ansible_repository:
+      <<: *pulp_connection_details
+    delete_orphans:
+      <<: *pulp_connection_details
+  tasks:
+    - name: Make distribution absent
+      ansible_distribution:
+        name: demo_distribution
+        state: absent
+    - name: Make repository absent
+      ansible_repository:
+        name: demo_repository
+        state: absent
+    - name: Make remote absent
+      ansible_remote:
+        name: demo_remote
+        state: absent
+    - name: Delete orphans
+      delete_orphans: {}
+    - name: Clean openapi cache
+      file:
+        path: "{{ lookup('env', 'XDG_CACHE_HOME') | default('~/.cache') }}/squeezer"
+        state: absent
+...

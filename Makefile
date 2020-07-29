@@ -1,9 +1,18 @@
-demo.cast: script.sh
-	ansible-playbook cleanup.yaml
-	asciinema rec --overwrite -c ./$< $@
+all: squeezer_demo_80x25.cast squeezer_demo_90x45.cast
 
-clean: .PHONY
-	ansible-playbook cleanup.yaml
-	-rm demo.cast
+squeezer_demo_80x25.cast: squeezer_demo/script.sh
+	ansible-playbook squeezer_demo/cleanup.yaml
+	stty cols 80
+	stty rows 25
+	asciinema rec --overwrite -c $< $@
 
-all: demo.cast
+squeezer_demo_90x45.cast: squeezer_demo/script.sh
+	ansible-playbook squeezer_demo/cleanup.yaml
+	stty cols 90
+	stty rows 45
+	asciinema rec --overwrite -c $< $@
+
+clean:
+	-rm *.cast
+
+.PHONY: clean

@@ -1,4 +1,7 @@
-all: squeezer_demo_80x25.cast squeezer_demo_90x45.cast
+all: status_demo.cast squeezer_demo_80x25.cast squeezer_demo_90x45.cast
+
+%.cast: %/script.sh
+	asciinema rec --overwrite -c $< $@
 
 squeezer_demo_80x25.cast: squeezer_demo/script.sh
 	ansible-playbook squeezer_demo/cleanup.yaml
